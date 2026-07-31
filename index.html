@@ -40,6 +40,27 @@
               <li>做三次深呼吸，放下杂念和预判。</li>
               <li>开始后分六次摇卦，每次掷出三枚铜钱，由下往上成卦。</li>
             </ol>
+            <fieldset class="question-picker">
+              <legend>本次占问方向</legend>
+              <div class="question-options">
+                <label class="question-option">
+                  <input type="radio" name="questionType" value="career" checked>
+                  <span>求事</span>
+                </label>
+                <label class="question-option">
+                  <input type="radio" name="questionType" value="people">
+                  <span>求人</span>
+                </label>
+                <label class="question-option">
+                  <input type="radio" name="questionType" value="money">
+                  <span>求财</span>
+                </label>
+                <label class="question-option">
+                  <input type="radio" name="questionType" value="love">
+                  <span>求姻缘</span>
+                </label>
+              </div>
+            </fieldset>
             <button id="startBtn" class="btn btn-primary" type="button">平心静气，开始起卦</button>
           </div>
         </div>
@@ -115,6 +136,15 @@
             <h3 id="readingTitle"></h3>
             <p class="reading-text" id="readingText"></p>
           </div>
+          <div class="reading-focus">
+            <p class="kicker" id="readingFocusLabel">本次占问 · 求事</p>
+            <div class="reading-tabs" id="readingTabs" role="tablist" aria-label="解读侧重">
+              <button class="reading-tab active" type="button" data-type="career">求事</button>
+              <button class="reading-tab" type="button" data-type="people">求人</button>
+              <button class="reading-tab" type="button" data-type="money">求财</button>
+              <button class="reading-tab" type="button" data-type="love">求姻缘</button>
+            </div>
+          </div>
           <div class="reading-summary">
             <h4>卦意解读</h4>
             <p id="readingSummary"></p>
@@ -144,7 +174,7 @@
       <section id="source" class="doc">
         <h2>数据与来源</h2>
         <p>周易卦辞、彖传、爻辞原文为古代经典文本，本页使用 ichingshifa 项目整理的数据（MIT License），并按文王卦序生成本地数据文件。</p>
-        <p>吉凶判断、卦辞预示与行为建议为白话解读，综合参考华易网六十四卦白话详解、易安居周易64卦详解等公开资料编写，用于帮助理解原文，不构成任何人生决策建议。</p>
+        <p>吉凶判断、卦辞预示与行为建议为白话解读，并按求事、求人、求财、求姻缘四个方向分别展开，综合参考华易网六十四卦白话详解、易安居周易64卦详解等公开资料编写，用于帮助理解原文，不构成任何人生决策建议。</p>
         <p>六十四卦的简短解读为本应用原创内容，供参考交流，不构成任何人生决策建议。</p>
       </section>
     </main>

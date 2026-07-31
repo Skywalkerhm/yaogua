@@ -37,10 +37,19 @@
     6: "六爻皆动 · 乾坤用「用九/用六」，其余以变卦卦辞为主",
   };
 
+  const QUESTION_TYPES = [
+    { id: "career", label: "求事" },
+    { id: "people", label: "求人" },
+    { id: "money", label: "求财" },
+    { id: "love", label: "求姻缘" },
+  ];
+
   const state = {
     lines: [],
     casting: false,
     breathTimer: null,
+    questionType: "career",
+    interpretationHex: null,
   };
 
   const prepare = $("#prepare");
@@ -87,6 +96,17 @@
   function showSection(name) {
     [prepare, casting, result].forEach((section) => section.classList.add("hidden"));
     $(`#${name}`).classList.remove("hidden");
+  }
+
+  function syncQuestionType() {
+    $$('input[name="questionType"]').forEach((input) => {
+      input.checked = input.value === state.questionType;
+    });
+    $$("#readingTabs .reading-tab").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.type === state.questionType);
+    });
+    const current = QUESTION_TYPES.find((item) => item.id === state.questionType);
+    $("#readingFocusLabel").textContent = "本次占问 · " + (current ? current.label : "");
   }
 
   function startBreathing() {
@@ -341,7 +361,8 @@
     const useBian =
       reading.count >= 4 &&
       !(reading.count === 6 && (ben.name === "乾" || ben.name === "坤"));
-    renderInterpretation(useBian ? bian : ben);
+    state.interpretationHex = useBian ? bian : ben;
+    renderInterpretation(state.interpretationHex, state.questionType);
 
     const blocks = $("#readingBlocks");
     blocks.innerHTML = "";
@@ -353,21 +374,23 @@
     });
   }
 
-  function renderInterpretation(hex) {
+  function renderInterpretation(hex, type) {
+    const reading =
+      hex.readings && hex.readings[type] ? hex.readings[type] : hex;
     const items = [
       {
         title: "吉凶判断",
-        text: hex.fortune || "吉凶需结合所问之事细看",
+        text: reading.fortune || "吉凶需结合所问之事细看",
         tone: "fortune",
       },
       {
         title: "卦辞预示",
-        text: hex.omen || hex.summary,
+        text: reading.omen || hex.summary,
         tone: "omen",
       },
       {
         title: "行为建议",
-        text: hex.advice || hex.summary,
+        text: reading.advice || hex.summary,
         tone: "advice",
       },
     ];
@@ -411,6 +434,9 @@
   }
 
   function startCasting() {
+    const checked = document.querySelector('input[name="questionType"]:checked');
+    state.questionType = checked ? checked.value : "career";
+    syncQuestionType();
     state.lines = [];
     stopBreathing();
     clearCoins();
@@ -423,6 +449,7 @@
   function resetAll() {
     state.lines = [];
     state.casting = false;
+    state.interpretationHex = null;
     clearCoins();
     showSection("prepare");
     startBreathing();
@@ -432,6 +459,27 @@
   castBtn.addEventListener("click", castLine);
   $("#againBtn").addEventListener("click", resetAll);
 
+  $$('input[name="questionType"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      state.questionType = input.value;
+      syncQuestionType();
+      if (state.interpretationHex) {
+        renderInterpretation(state.interpretationHex, state.questionType);
+      }
+    });
+  });
+
+  $$("#readingTabs .reading-tab").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      state.questionType = btn.dataset.type;
+      syncQuestionType();
+      if (state.interpretationHex) {
+        renderInterpretation(state.interpretationHex, state.questionType);
+      }
+    });
+  });
+
+  syncQuestionType();
   startBreathing();
   renderLineStack();
 })();
