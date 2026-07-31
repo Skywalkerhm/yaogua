@@ -757,6 +757,36 @@ p {
   color: var(--gold);
 }
 
+.transformation-panel {
+  margin-top: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--gold);
+  border-radius: var(--radius);
+  background: #fbf8ef;
+}
+
+.transformation-panel .kicker {
+  margin: 0 0 6px;
+}
+
+.transformation-panel h4 {
+  margin-bottom: 8px;
+  color: var(--gold);
+  font-size: 16px;
+}
+
+.transformation-panel p {
+  margin: 0 0 8px;
+  font-size: 15px;
+}
+
+.transformation-lines {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .reading-blocks {
   display: grid;
   grid-template-columns: 1fr 1fr;

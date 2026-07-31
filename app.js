@@ -50,6 +50,9 @@
     breathTimer: null,
     questionType: "career",
     interpretationHex: null,
+    ben: null,
+    bian: null,
+    movingIndexes: [],
   };
 
   const prepare = $("#prepare");
@@ -362,7 +365,11 @@
       reading.count >= 4 &&
       !(reading.count === 6 && (ben.name === "乾" || ben.name === "坤"));
     state.interpretationHex = useBian ? bian : ben;
+    state.ben = ben;
+    state.bian = bian;
+    state.movingIndexes = movingIndexes;
     renderInterpretation(state.interpretationHex, state.questionType);
+    renderTransformation(ben, bian, movingIndexes, state.questionType);
 
     const blocks = $("#readingBlocks");
     blocks.innerHTML = "";
@@ -402,6 +409,84 @@
       node.innerHTML = "<h4>" + item.title + "</h4><p>" + item.text + "</p>";
       cards.appendChild(node);
     });
+  }
+
+  function fortuneRank(hex, type) {
+    const reading =
+      hex.readings && hex.readings[type] ? hex.readings[type] : hex;
+    const fortune = reading.fortune || "";
+    const ranks = [
+      ["上上", 5],
+      ["中上", 4],
+      ["中中", 3],
+      ["中下", 2],
+      ["下下", 1],
+    ];
+    const matched = ranks.find(([key]) => fortune.startsWith(key));
+    return matched ? matched[1] : 3;
+  }
+
+  function renderTransformation(ben, bian, movingIndexes, type) {
+    const benReading =
+      ben.readings && ben.readings[type] ? ben.readings[type] : ben;
+    const bianReading =
+      bian.readings && bian.readings[type] ? bian.readings[type] : bian;
+    const benLabel = (benReading.fortune || "中中卦").split(" · ")[0];
+    const bianLabel = (bianReading.fortune || "中中卦").split(" · ")[0];
+    const benScore = fortuneRank(ben, type);
+    const bianScore = fortuneRank(bian, type);
+    const delta = bianScore - benScore;
+    const direction =
+      delta > 0 ? "由弱转强" : delta < 0 ? "由强转弱" : "平势守成";
+
+    $("#transformationTitle").textContent =
+      `${benLabel} → ${bianLabel} · ${direction}`;
+
+    const benFocus = benReading.omen || ben.summary;
+    const bianFocus = bianReading.omen || bian.summary;
+    let trendText = "";
+    if (delta > 0) {
+      trendText =
+        "方向偏向转好，但变卦只是下一阶段的方向，需按变卦的做法落实才有机会。";
+    } else if (delta < 0) {
+      trendText =
+        "方向偏向转弱，宜以本卦守正止损为先，不因变卦表面变化而冒进。";
+    } else {
+      trendText = "吉凶等级相近，重点不在结果翻转，而在做法切换。";
+    }
+
+    $("#transformationText").textContent =
+      `本卦${ben.name}主「${benFocus}」；变卦${bian.name}主「${bianFocus}」。` +
+      trendText;
+
+    let linesText = "";
+    if (movingIndexes.length === 0) {
+      linesText = "六爻皆静，没有动爻变化，以本卦卦辞持续贯彻。";
+    } else {
+      const parts = movingIndexes.map((index) => {
+        const from = ben.lines[index].label;
+        const to = bian.lines[index].label;
+        const change = ben.binary[index] === "1" ? "阳变阴" : "阴变阳";
+        return `${POSITION_NAMES[index]} ${from} ${change} → ${to}`;
+      });
+      linesText = "动爻：" + parts.join("；") + "。";
+    }
+    $("#transformationLines").textContent = linesText;
+  }
+
+  function refreshReading() {
+    if (!state.interpretationHex) {
+      return;
+    }
+    renderInterpretation(state.interpretationHex, state.questionType);
+    if (state.ben) {
+      renderTransformation(
+        state.ben,
+        state.bian,
+        state.movingIndexes,
+        state.questionType
+      );
+    }
   }
 
   function finishCasting() {
@@ -450,6 +535,9 @@
     state.lines = [];
     state.casting = false;
     state.interpretationHex = null;
+    state.ben = null;
+    state.bian = null;
+    state.movingIndexes = [];
     clearCoins();
     showSection("prepare");
     startBreathing();
@@ -463,9 +551,7 @@
     input.addEventListener("change", () => {
       state.questionType = input.value;
       syncQuestionType();
-      if (state.interpretationHex) {
-        renderInterpretation(state.interpretationHex, state.questionType);
-      }
+      refreshReading();
     });
   });
 
@@ -473,9 +559,7 @@
     btn.addEventListener("click", () => {
       state.questionType = btn.dataset.type;
       syncQuestionType();
-      if (state.interpretationHex) {
-        renderInterpretation(state.interpretationHex, state.questionType);
-      }
+      refreshReading();
     });
   });
 
