@@ -42,6 +42,10 @@
     { id: "people", label: "求人" },
     { id: "money", label: "求财" },
     { id: "love", label: "求姻缘" },
+    { id: "study", label: "学业" },
+    { id: "travel", label: "出行" },
+    { id: "cooperation", label: "合作" },
+    { id: "decision", label: "决策" },
   ];
 
   const state = {
