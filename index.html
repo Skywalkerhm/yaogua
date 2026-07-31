@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="爻卦：静心、六次摇卦、本地解读周易卦爻辞的六爻小工具。">
+  <title>爻卦 · 周易六爻</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="data/hexagrams.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">☯</span>
+        <div>
+          <h1>爻卦</h1>
+          <p>周易六爻 · 三枚铜钱 · 六次成卦</p>
+        </div>
+      </div>
+      <nav class="topnav" aria-label="页面导航">
+        <a class="nav-link" href="#how">爻卦规则</a>
+        <a class="nav-link" href="#source">数据来源</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="prepare" class="stage" aria-labelledby="prepare-title">
+        <div class="prepare-layout">
+          <div class="breath-box">
+            <div class="breath-ring" id="breathRing" aria-hidden="true">
+              <span class="breath-text" id="breathText">吸气</span>
+            </div>
+            <p class="breath-note">跟随圆环节奏，做三次深呼吸</p>
+          </div>
+          <div class="prepare-copy">
+            <h2 id="prepare-title">先静心，再问事</h2>
+            <ol class="steps">
+              <li>把想问、想祈愿的事在心里想清楚，越具体越好。</li>
+              <li>做三次深呼吸，放下杂念和预判。</li>
+              <li>开始后分六次摇卦，每次掷出三枚铜钱，由下往上成卦。</li>
+            </ol>
+            <button id="startBtn" class="btn btn-primary" type="button">平心静气，开始起卦</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="casting" class="stage hidden" aria-labelledby="casting-title">
+        <div class="casting-layout">
+          <div class="coin-panel">
+            <h2 id="casting-title">六次摇卦</h2>
+            <div class="coins" id="coins" aria-label="三枚铜钱">
+              <span class="coin" data-idx="0"></span>
+              <span class="coin" data-idx="1"></span>
+              <span class="coin" data-idx="2"></span>
+            </div>
+            <p class="cast-hint" id="castHint">第 1 爻：掷出三枚铜钱</p>
+            <button id="castBtn" class="btn btn-primary" type="button">掷铜钱</button>
+            <p class="cast-note">从下往上，共六爻</p>
+            <div class="progress" aria-hidden="true">
+              <span class="progress-dot"></span>
+              <span class="progress-dot"></span>
+              <span class="progress-dot"></span>
+              <span class="progress-dot"></span>
+              <span class="progress-dot"></span>
+              <span class="progress-dot"></span>
+            </div>
+            <p class="progress-text" id="progressText">0 / 6</p>
+          </div>
+
+          <div class="stack-panel">
+            <h3>卦爻渐成</h3>
+            <div class="line-stack" id="lineStack"></div>
+            <p class="stack-tip" id="stackTip">每次掷钱后，爻象会从下往上长出来</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="result" class="stage hidden" aria-labelledby="result-title">
+        <div class="result-head">
+          <div>
+            <p class="kicker">起卦完成</p>
+            <h2 id="resultTitle">本卦与变卦</h2>
+          </div>
+          <button id="againBtn" class="btn btn-ghost" type="button">重新起卦</button>
+        </div>
+
+        <div class="hex-pair">
+          <article class="hex-card">
+            <div class="hex-diagram" id="benDiagram"></div>
+            <div class="hex-card-body">
+              <h3 id="benName">本卦</h3>
+              <p class="hex-meta" id="benMeta"></p>
+              <p class="hex-symbol" id="benSymbol"></p>
+            </div>
+          </article>
+          <article class="hex-card">
+            <div class="hex-diagram" id="bianDiagram"></div>
+            <div class="hex-card-body">
+              <h3 id="bianName">变卦</h3>
+              <p class="hex-meta" id="bianMeta"></p>
+              <p class="hex-symbol" id="bianSymbol"></p>
+            </div>
+          </article>
+        </div>
+
+        <div class="line-table-wrap">
+          <h3>六爻明细</h3>
+          <div class="line-table" id="lineTable"></div>
+        </div>
+
+        <article class="reading-panel">
+          <div class="reading-main">
+            <p class="kicker" id="readingRule"></p>
+            <h3 id="readingTitle"></h3>
+            <p class="reading-text" id="readingText"></p>
+          </div>
+          <div class="reading-summary">
+            <h4>卦意解读</h4>
+            <p id="readingSummary"></p>
+          </div>
+          <div class="reading-cards" id="readingCards"></div>
+          <div class="reading-blocks" id="readingBlocks"></div>
+          <div class="reading-details">
+            <details>
+              <summary>本卦彖传</summary>
+              <p id="benTuan"></p>
+            </details>
+            <details>
+              <summary>变卦彖传</summary>
+              <p id="bianTuan"></p>
+            </details>
+          </div>
+        </article>
+      </section>
+
+      <section id="how" class="doc">
+        <h2>爻卦规则</h2>
+        <p>采用三枚铜钱法：有字一面为「字」（阴，计 2），无字一面为「背」（阳，计 3）。</p>
+        <p>每次掷三枚铜钱，和为 6 为老阴、7 为少阳、8 为少阴、9 为老阳；六次由下往上排成本卦，其中老阴、老阳为动爻，动则阴阳互变，另成变卦。</p>
+        <p>断卦依据朱熹、蔡元定《易学启蒙》考变占之法：无动爻看本卦卦辞；一爻动看该爻爻辞；两爻动看两动爻、以上爻为主；三爻动合看本卦与变卦卦辞；四爻动看变卦两静爻、以下爻为主；五爻动看变卦静爻；六爻皆动时乾坤用「用九」「用六」，其余看变卦卦辞。</p>
+      </section>
+
+      <section id="source" class="doc">
+        <h2>数据与来源</h2>
+        <p>周易卦辞、彖传、爻辞原文为古代经典文本，本页使用 ichingshifa 项目整理的数据（MIT License），并按文王卦序生成本地数据文件。</p>
+        <p>吉凶判断、卦辞预示与行为建议为白话解读，综合参考华易网六十四卦白话详解、易安居周易64卦详解等公开资料编写，用于帮助理解原文，不构成任何人生决策建议。</p>
+        <p>六十四卦的简短解读为本应用原创内容，供参考交流，不构成任何人生决策建议。</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>爻卦 · 本地运行，无需联网，不调用任何语言模型</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
