@@ -431,6 +431,15 @@
   }
 
   function renderTransformation(ben, bian, movingIndexes, type) {
+    if (movingIndexes.length === 0) {
+      $("#transformationTitle").textContent = "六爻皆静 · 无变卦";
+      $("#transformationText").textContent =
+        "本次没有动爻，不产生变卦；断卦以本卦卦辞为主，仍按所选方向参考解读。";
+      $("#transformationLines").textContent =
+        "六爻皆静，没有动爻变化，以本卦卦辞持续贯彻。";
+      return;
+    }
+
     const benReading =
       ben.readings && ben.readings[type] ? ben.readings[type] : ben;
     const bianReading =
@@ -503,16 +512,29 @@
       }
     });
 
-    $("#resultTitle").textContent = `本卦 ${ben.symbol} ${ben.name} · 变卦 ${bian.symbol} ${bian.name}`;
+    const hasChange = movingIndexes.length > 0;
+    $("#resultTitle").textContent = hasChange
+      ? `本卦 ${ben.symbol} ${ben.name} · 变卦 ${bian.symbol} ${bian.name}`
+      : `本卦 ${ben.symbol} ${ben.name} · 六爻皆静`;
     $("#benName").textContent = `本卦 · ${ben.symbol} ${ben.name}`;
     $("#benMeta").textContent = `上${ben.upper.nature} ${ben.upper.name} · 下${ben.lower.nature} ${ben.lower.name} · 第 ${ben.order} 卦`;
     $("#benSymbol").textContent = ben.symbol;
-    $("#bianName").textContent = `变卦 · ${bian.symbol} ${bian.name}`;
-    $("#bianMeta").textContent = `上${bian.upper.nature} ${bian.upper.name} · 下${bian.lower.nature} ${bian.lower.name} · 第 ${bian.order} 卦`;
-    $("#bianSymbol").textContent = bian.symbol;
+    if (hasChange) {
+      $("#bianName").textContent = `变卦 · ${bian.symbol} ${bian.name}`;
+      $("#bianMeta").textContent = `上${bian.upper.nature} ${bian.upper.name} · 下${bian.lower.nature} ${bian.lower.name} · 第 ${bian.order} 卦`;
+      $("#bianSymbol").textContent = bian.symbol;
+    } else {
+      $("#bianName").textContent = "变卦 · 六爻皆静";
+      $("#bianMeta").textContent = "本次无动爻，不产生变卦";
+      $("#bianSymbol").textContent = "静";
+    }
 
     renderDiagram($("#benDiagram"), ben, movingIndexes);
-    renderDiagram($("#bianDiagram"), bian, movingIndexes);
+    if (hasChange) {
+      renderDiagram($("#bianDiagram"), bian, movingIndexes);
+    } else {
+      $("#bianDiagram").innerHTML = "";
+    }
     renderLineTable(ben, metas, movingIndexes);
     renderReading(ben, bian, movingIndexes);
 
