@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="罗盘 · 九宫飞星解读工具：二十四山排盘、坐向换算、九宫飞星宅命盘与流年吉凶方位，全部本地运行。">
+  <title>罗盘 · 九宫飞星解读</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">🧭</span>
+        <div>
+          <h1>罗盘 · 九宫飞星</h1>
+          <p>二十四山 · 玄空飞星 · 本地解读</p>
+        </div>
+      </div>
+      <nav class="topnav" aria-label="页面导航">
+        <a class="nav-link" href="../index.html">← 返回爻卦</a>
+        <a class="nav-link" href="#how">方法说明</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="tabs" role="tablist" aria-label="功能选择">
+        <button class="tab active" type="button" role="tab" data-tab="mountains">罗盘 · 二十四山</button>
+        <button class="tab" type="button" role="tab" data-tab="flying">九宫飞星</button>
+      </section>
+
+      <!-- ======== 二十四山 ======== -->
+      <section id="tab-mountains" class="tabpanel" role="tabpanel">
+        <div class="panel-grid compass-layout">
+          <article class="card compass-card">
+            <h2>罗盘读数</h2>
+            <p class="card-note">用罗盘（或手机指南针）量出建筑朝向的度数，点击圆盘任意位置也可取角。</p>
+            <svg id="compassSvg" viewBox="0 0 400 400" role="img" aria-label="二十四山罗盘">
+            </svg>
+            <div class="degree-controls">
+              <label class="range-row">
+                <span>度数</span>
+                <input id="degSlider" type="range" min="0" max="359" step="1" value="180">
+                <input id="degInput" type="number" min="0" max="360" step="1" value="180">
+                <span>°</span>
+              </label>
+              <fieldset class="mode-picker">
+                <legend>这个读数代表</legend>
+                <label><input type="radio" name="mode" id="modeFacing" value="facing" checked><span>正对方向（朝向）</span></label>
+                <label><input type="radio" name="mode" id="modeSeat" value="seat"><span>背后方向（坐山）</span></label>
+              </fieldset>
+              <div class="seat-row">
+                <label class="select-label">坐山
+                  <select id="seatSelect"></select>
+                </label>
+                <span class="arrow">→</span>
+                <span class="select-label">向首 <strong id="facingChip" class="chip">午山</strong></span>
+              </div>
+            </div>
+            <p id="zoneWarn" class="warn hidden"></p>
+          </article>
+
+          <article class="card mountain-card">
+            <h2 id="mountainTitle">子山午向</h2>
+            <dl id="mountainInfo" class="info-list"></dl>
+            <div id="mountainNote" class="note"></div>
+          </article>
+        </div>
+      </section>
+
+      <!-- ======== 九宫飞星 ======== -->
+      <section id="tab-flying" class="tabpanel hidden" role="tabpanel">
+        <article class="card controls-card">
+          <h2>九宫飞星排盘</h2>
+          <div class="controls-grid">
+            <label class="select-label">坐山
+              <select id="flySeatSelect"></select>
+            </label>
+            <label class="select-label">元运
+              <select id="periodSelect"></select>
+            </label>
+            <label class="select-label">流年
+              <input id="yearInput" type="number" min="1900" max="2100" step="1" value="2026">
+            </label>
+            <label class="check-label">
+              <input id="showYearCheck" type="checkbox" checked>
+              <span>显示流年飞星</span>
+            </label>
+          </div>
+          <p class="card-note">排盘为「下卦（正针）」之法；若坐向落在两山分界线附近（兼线/骑缝），专业上需用替卦，本工具按就近下卦解读。</p>
+        </article>
+
+        <div class="chart-layout">
+          <article class="card chart-block">
+            <p class="kicker">宅命盘 · 三元</p>
+            <h2 id="zuoTitle">子山午向 · 九运（九紫当运）</h2>
+            <p class="chart-hint">每宫三数：运星居中，山星居左上，向星居右上；「坐」「向」标记坐山与向首所在宫。</p>
+            <div id="zuomingChart" class="feipan"></div>
+            <div class="legend">
+              <span>九星色标：</span>
+              <span class="lg" style="--sc:#9aa7a3">1白</span>
+              <span class="lg" style="--sc:#3a3a3a">2黑</span>
+              <span class="lg" style="--sc:#3d8b5f">3碧</span>
+              <span class="lg" style="--sc:#2e7d4f">4绿</span>
+              <span class="lg" style="--sc:#c99b2e">5黄</span>
+              <span class="lg" style="--sc:#b8c0bd">6白</span>
+              <span class="lg" style="--sc:#c2573a">7赤</span>
+              <span class="lg" style="--sc:#d9b64e">8白</span>
+              <span class="lg" style="--sc:#7a4d9b">9紫</span>
+            </div>
+            <div id="assessCard" class="assess"></div>
+            <details id="calcDetails" class="calc">
+              <summary>查看排盘过程</summary>
+            </details>
+          </article>
+
+          <article id="yearBlock" class="card chart-block">
+            <p class="kicker">流年飞星</p>
+            <h2 id="yearTitle">2026年（一白贪狼入中）</h2>
+            <div id="yearChart" class="feipan year-feipan"></div>
+            <div id="yearTips" class="year-tips"></div>
+          </article>
+        </div>
+
+        <article class="card palace-cards-block">
+          <h2>各宫山向组合解读</h2>
+          <p class="card-note">按山星×向星的五行生克与星性综合给出，凶位宜静、忌动土，吉位宜聚气、纳财。</p>
+          <div id="palaceCards" class="palace-cards"></div>
+        </article>
+      </section>
+
+      <section id="how" class="doc">
+        <h2>方法说明</h2>
+        <p><strong>二十四山</strong>：罗盘一圈 360° 分二十四格，每格 15°，由 12 地支、8 天干与 4 个卦位（乾、坤、艮、巽）组成，每卦管三山。测得朝向度数后即可换算出「坐山向山」，例如朝向 165° 为丙山，坐山即为壬，称「壬山丙向」。</p>
+        <p><strong>九宫飞星（玄空）</strong>：以当运之数入中顺飞成运盘；山星、向星分别以坐向所在宫运星入中，按该星在元旦盘所管三山中、与坐向同三元龙之山的阴阳定顺逆（阳顺阴逆），排出山盘、向盘，合为宅命盘。再以流年入中星顺飞得流年盘，看当年财位、文昌、五黄等方位。</p>
+        <p><strong>总断格局</strong>：旺山旺向、双星到坐、双星到向、上山下水，按当运旺星在坐向两宫的分布判定；伏吟、反吟按中宫山向星与运星是否相同或合十判定。</p>
+        <p>本工具为传统术数知识整理，用于学习参考，不构成任何现实决策建议。</p>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <p>罗盘 · 九宫飞星解读 · 本地运行，无需联网，不调用任何语言模型</p>
+    </footer>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
