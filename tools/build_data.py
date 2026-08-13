@@ -478,6 +478,9 @@ def build() -> list[dict]:
     if missing:
         sys.exit(f"missing hexagrams: {missing}")
 
+    line_plain = json.loads(
+        (DATA_DIR / "line_plain.json").read_text(encoding="utf-8")
+    )
     hexagrams = []
     for order, name in enumerate(ORDER, 1):
         raw = details[name]
@@ -501,7 +504,11 @@ def build() -> list[dict]:
         lines = []
         for index in range(1, 7):
             label, text = split_line(raw[index], index)
-            lines.append({"label": label, "text": text})
+            plain = line_plain.get(f"{order}:{label}", "")
+            if not plain:
+                raise SystemExit(f"missing line plain: {order}:{label}")
+            plain = re.sub(rf"^{re.escape(label)}[：:]\s*", "", plain).strip()
+            lines.append({"label": label, "text": text, "plain": plain})
 
         readings = {}
         base_fortune = INTERPRETATIONS[name]["fortune"].split(" · ")[0]

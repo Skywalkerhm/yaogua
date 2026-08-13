@@ -609,6 +609,12 @@ p {
   font-size: 12px;
 }
 
+.line-row-detail .line-plain {
+  margin-top: 5px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
 .line-row-detail .moving-badge {
   display: inline-block;
   margin-left: 8px;

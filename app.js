@@ -57,6 +57,7 @@
     ben: null,
     bian: null,
     movingIndexes: [],
+    mainPlain: "",
   };
 
   const prepare = $("#prepare");
@@ -246,6 +247,7 @@
     const blocks = [];
     let mainTitle = "";
     let mainText = "";
+    let mainPlain = "";
 
     if (count === 0) {
       mainTitle = `${ben.name}卦 · 卦辞`;
@@ -254,12 +256,14 @@
       const line = ben.lines[movingIndexes[0]];
       mainTitle = `${ben.name}卦 · ${line.label}`;
       mainText = line.text;
+      mainPlain = line.plain || "";
       blocks.push({ title: `${ben.name}卦 · 卦辞参考`, text: ben.judgement });
     } else if (count === 2) {
       const lower = Math.min(movingIndexes[0], movingIndexes[1]);
       const upper = Math.max(movingIndexes[0], movingIndexes[1]);
       mainTitle = `${ben.name}卦 · ${ben.lines[upper].label}`;
       mainText = ben.lines[upper].text;
+      mainPlain = ben.lines[upper].plain || "";
       blocks.push({ title: `${ben.name}卦 · 下动爻参考`, text: ben.lines[lower].text });
     } else if (count === 3) {
       mainTitle = `${ben.name}卦 · 卦辞（主）`;
@@ -274,6 +278,7 @@
       const upper = Math.max(staticIndexes[0], staticIndexes[1]);
       mainTitle = `${bian.name}卦 · ${bian.lines[lower].label}`;
       mainText = bian.lines[lower].text;
+      mainPlain = bian.lines[lower].plain || "";
       blocks.push({
         title: `${bian.name}卦 · 上静爻参考`,
         text: bian.lines[upper].text,
@@ -285,6 +290,7 @@
       );
       mainTitle = `${bian.name}卦 · ${bian.lines[staticIndex].label}`;
       mainText = bian.lines[staticIndex].text;
+      mainPlain = bian.lines[staticIndex].plain || "";
       blocks.push({ title: `${bian.name}卦 · 变卦参考`, text: bian.summary });
     } else if (count === 6) {
       if (ben.name === "乾" && ben.yong) {
@@ -300,7 +306,7 @@
       blocks.push({ title: `${bian.name}卦 · 变卦参考`, text: bian.summary });
     }
 
-    return { count, ruleLabel, mainTitle, mainText, blocks };
+    return { count, ruleLabel, mainTitle, mainText, mainPlain, blocks };
   }
 
   function renderDiagram(el, hex, movingIndexes) {
@@ -349,6 +355,9 @@
         (moving ? '<span class="moving-badge">动</span>' : "") +
         '<div class="line-note">' +
         lineNote(index, meta) +
+        (line.plain
+          ? '<div class="line-plain">白话：' + line.plain + "</div>"
+          : "") +
         "</div>" +
         "</div>";
       table.appendChild(row);
@@ -371,9 +380,10 @@
     state.ben = ben;
     state.bian = bian;
     state.movingIndexes = movingIndexes;
+    state.mainPlain = reading.mainPlain;
     $("#readingSummary").textContent = state.interpretationHex.summary;
     renderInterpretation(state.interpretationHex, state.questionType);
-    renderPlain(state.interpretationHex, state.questionType);
+    renderPlain(state.interpretationHex, state.questionType, reading.mainPlain);
     renderGuide(ben, bian, movingIndexes, state.questionType);
     renderTransformation(ben, bian, movingIndexes, state.questionType);
 
@@ -417,10 +427,11 @@
     });
   }
 
-  function renderPlain(hex, type) {
+  function renderPlain(hex, type, mainPlain) {
     const reading =
       hex.readings && hex.readings[type] ? hex.readings[type] : hex;
-    $("#readingPlain").textContent = reading.omen || hex.summary;
+    $("#readingPlain").textContent =
+      mainPlain || reading.omen || hex.summary;
   }
 
   function renderGuide(ben, bian, movingIndexes, type) {
@@ -523,7 +534,11 @@
       return;
     }
     renderInterpretation(state.interpretationHex, state.questionType);
-    renderPlain(state.interpretationHex, state.questionType);
+    renderPlain(
+      state.interpretationHex,
+      state.questionType,
+      state.mainPlain
+    );
     renderGuide(
       state.ben,
       state.bian,
