@@ -361,7 +361,6 @@
     $("#readingRule").textContent = `${reading.count} 个动爻 · ${reading.ruleLabel}`;
     $("#readingTitle").textContent = reading.mainTitle;
     $("#readingText").textContent = reading.mainText;
-    $("#readingSummary").textContent = ben.summary;
     $("#benTuan").textContent = ben.tuan;
     $("#bianTuan").textContent = bian.tuan;
 
@@ -372,7 +371,10 @@
     state.ben = ben;
     state.bian = bian;
     state.movingIndexes = movingIndexes;
+    $("#readingSummary").textContent = state.interpretationHex.summary;
     renderInterpretation(state.interpretationHex, state.questionType);
+    renderPlain(state.interpretationHex, state.questionType);
+    renderGuide(ben, bian, movingIndexes, state.questionType);
     renderTransformation(ben, bian, movingIndexes, state.questionType);
 
     const blocks = $("#readingBlocks");
@@ -390,17 +392,17 @@
       hex.readings && hex.readings[type] ? hex.readings[type] : hex;
     const items = [
       {
-        title: "吉凶判断",
+        title: "现在判断",
         text: reading.fortune || "吉凶需结合所问之事细看",
         tone: "fortune",
       },
       {
-        title: "卦辞预示",
+        title: "接下来会怎样",
         text: reading.omen || hex.summary,
         tone: "omen",
       },
       {
-        title: "行为建议",
+        title: "现在就做",
         text: reading.advice || hex.summary,
         tone: "advice",
       },
@@ -413,6 +415,35 @@
       node.innerHTML = "<h4>" + item.title + "</h4><p>" + item.text + "</p>";
       cards.appendChild(node);
     });
+  }
+
+  function renderPlain(hex, type) {
+    const reading =
+      hex.readings && hex.readings[type] ? hex.readings[type] : hex;
+    $("#readingPlain").textContent = reading.omen || hex.summary;
+  }
+
+  function renderGuide(ben, bian, movingIndexes, type) {
+    const hex = state.interpretationHex || ben;
+    const reading =
+      hex.readings && hex.readings[type] ? hex.readings[type] : hex;
+    const current = QUESTION_TYPES.find((item) => item.id === type);
+    const label = current ? current.label : "";
+    let path = "六爻皆静，以本卦为主";
+    if (movingIndexes.length > 0) {
+      const benReading =
+        ben.readings && ben.readings[type] ? ben.readings[type] : ben;
+      const bianReading =
+        bian.readings && bian.readings[type] ? bian.readings[type] : bian;
+      const benLabel = (benReading.fortune || "中中卦").split(" · ")[0];
+      const bianLabel = (bianReading.fortune || "中中卦").split(" · ")[0];
+      const delta = fortuneRank(bian, type) - fortuneRank(ben, type);
+      const direction =
+        delta > 0 ? "由弱转强" : delta < 0 ? "由强转弱" : "平势守成";
+      path = `${benLabel} → ${bianLabel}，${direction}`;
+    }
+    $("#readingGuide").textContent =
+      `问「${label}」：${path}。先做：${reading.advice}`;
   }
 
   function fortuneRank(hex, type) {
@@ -492,6 +523,13 @@
       return;
     }
     renderInterpretation(state.interpretationHex, state.questionType);
+    renderPlain(state.interpretationHex, state.questionType);
+    renderGuide(
+      state.ben,
+      state.bian,
+      state.movingIndexes,
+      state.questionType
+    );
     if (state.ben) {
       renderTransformation(
         state.ben,
