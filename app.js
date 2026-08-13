@@ -372,6 +372,15 @@
     $("#readingText").textContent = reading.mainText;
     $("#benTuan").textContent = ben.tuan;
     $("#bianTuan").textContent = bian.tuan;
+    if (movingIndexes.length === 0) {
+      const bianDetails = $("#bianTuan").closest("details");
+      bianDetails.querySelector("summary").textContent = "六爻皆静说明";
+      $("#bianTuan").textContent = "本次无动爻，不产生变卦，以本卦卦辞为主。";
+    } else {
+      const bianDetails = $("#bianTuan").closest("details");
+      bianDetails.querySelector("summary").textContent = "变卦彖传";
+      $("#bianTuan").textContent = bian.tuan;
+    }
 
     const useBian =
       reading.count >= 4 &&
@@ -617,6 +626,7 @@
     state.ben = null;
     state.bian = null;
     state.movingIndexes = [];
+    state.mainPlain = "";
     clearCoins();
     showSection("prepare");
     startBreathing();

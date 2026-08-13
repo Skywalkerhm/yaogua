@@ -74,11 +74,12 @@ def main() -> None:
             data[f"{order}:{label}"] = plain
         time.sleep(0.03)
 
+    data["_source"] = "k366.com 六十四卦白话详解"
     OUT.write_text(
         json.dumps(data, ensure_ascii=False, indent=1) + "\n",
         encoding="utf-8",
     )
-    print(f"wrote {OUT} ({len(data)} lines)")
+    print(f"wrote {OUT} (384 line translations)")
 
 
 if __name__ == "__main__":
