@@ -47,7 +47,8 @@
 │   └── 周易文本说明.md  # 原文来源与数据说明
 └── tools/
     ├── build_data.py   # 数据生成脚本
-    └── fetch_line_plain.py  # 抓取/更新爻辞白话
+    ├── fetch_line_plain.py  # 抓取/更新爻辞白话
+    └── test_data.py    # 数据完整性测试
 ```
 
 ## 规则摘要
